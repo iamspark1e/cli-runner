@@ -1,0 +1,86 @@
+// Common
+.dashed-underline {
+  text-decoration-style: dashed;
+  text-decoration-line: underline;
+  text-decoration-color: #ccc;
+}
+
+// Base
+:root {
+  box-sizing: border-box;
+}
+.container {
+  & > section {
+    width: 100vw;
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+}
+
+// // Others
+// .handlers {
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+// }
+
+// .table-container {
+//   margin-top: 10px;
+
+//   table {
+//     width: 100%;
+//     border-collapse: collapse;
+//     border-color: #fff;
+
+//     tr {
+//       width: 100%;
+//       padding: 0;
+//     }
+
+//     td,
+//     th {
+//       padding: 5px;
+//     }
+
+//     th {
+//       font-weight: bold;
+//     }
+//   }
+
+//   table,
+//   tr,
+//   th,
+//   td {
+//     border: 1px solid;
+//     box-sizing: border-box;
+//   }
+// }
+
+// // Create Runner Dialog Content
+// .create-dialog-content {
+//   .content {
+//     padding: 10px;
+//     box-sizing: border-box;
+//     width: 100%;
+//     color: #333;
+//     .row {
+//       display: table-row;
+//       .row-title, .row-field {
+//         display: table-cell;
+//       }
+//     }
+//   }
+//   .footer {
+//     display: flex;
+//     width: 100%;
+//     height: 40px;
+//     padding: 0 10px;
+//     align-items: center;
+//     justify-content: space-between;
+//     box-sizing: border-box;
+//     button + button {
+//       margin-left: 10px;
+//     }
+//   }
+// }

@@ -1,0 +1,53 @@
+.dialog {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba($color: #fff, $alpha: .2);
+  top: 0;
+  left: 0;
+  align-items: center;
+  justify-content: center;
+  display: none;
+
+  &[data-show=true] {
+    display: flex;
+  }
+
+  .dialog-box {
+    width: 80%;
+    max-width: 500px;
+    height: 400px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 3px 8px #45120a66;
+  }
+
+  .box-title {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #333;
+    line-height: 40px;
+    height: 40px;
+    padding: 0 10px;
+    font-weight: bold;
+  }
+}
+
+.icon-button {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+  background: url('/Close.svg') no-repeat center/80%;
+  &:hover {
+    background-color: #eee;
+  }
+}

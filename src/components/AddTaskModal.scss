@@ -1,0 +1,11 @@
+.add-task-modal .ui.form {
+  .inline.field {
+    &>label {
+      width: 120px;
+    }
+
+    &>input {
+      min-width: 500px;
+    }
+  }
+}

@@ -1,0 +1,57 @@
+.tasks-table {
+  z-index: 1;
+  // height: 100%;
+  overflow: auto;
+  position: relative;
+  border: none !important;
+
+  thead {
+    z-index: 10;
+    position: sticky;
+    top: 0;
+  }
+
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .task-name {
+    .locate-executable {
+      opacity: .2;
+      transition: opacity linear .2s;
+      cursor: pointer;
+    }
+
+    &:hover>.locate-executable {
+      opacity: 1;
+    }
+  }
+
+  tbody.tasks-body {
+    overflow-y: auto;
+
+    .task-name {
+      & > strong {
+        width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        white-space: nowrap;
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+
+    code {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      word-break: break-all;
+      width: auto;
+      max-width: 470px;
+      display: block;
+    }
+  }
+}
