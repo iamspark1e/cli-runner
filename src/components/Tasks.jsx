@@ -1,6 +1,8 @@
-import { useReducer, useState } from 'react'
+import { useReducer, useRef, useState } from 'react'
 import { Button, Table, Icon, Header, Modal } from 'semantic-ui-react'
 import ModifyTaskModal from './ModifyTaskModal'
+import { confirm, save, message  } from '@tauri-apps/api/dialog'
+import GlobalConfig from "../model/GlobalConfig";
 import './Tasks.scss'
 
 const ConfirmRemoveTaskModal = ({ onConfirm }) => {
@@ -121,12 +123,61 @@ const TaskRow = ({ task }) => {
 }
 
 export const TasksTableHandler = ({ config, addModal, terminate }) => {
+  const virtualConfigInputRef = useRef(null)
+
+  function configFileHandler(e) {
+    if (e.target.files[0]) {
+      var file = e.target.files[0]
+      var reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = function (evt) {
+        // console.log(evt.target.result);
+        try {
+          let data = JSON.parse(evt.target.result);
+          if (config && config instanceof GlobalConfig) {
+            if(!Array.isArray(data)) {
+              message("Error: load config JSON failed, please check!");
+              return;
+            }
+            data.forEach(row => {
+              try {
+                config.addTask(row);
+              } catch(err) {
+                message("Error: load row failed, please check " + (row.id || ("NO ID ROW")));
+              }
+            })
+            
+            setTimeout(() => {
+              window.location.reload()
+            }, 1000)
+          } else {
+            message("Error: " + "config is not a constructor of `GlobalConfig`");
+          }
+        } catch(e) {
+          console.log(e)
+          message("Error: " + e.message);
+        }
+      }
+      reader.onerror = function (evt) {
+        console.log(evt);
+        message("Read Error: " + e.message);
+      }
+    } else {
+      console.log('no file')
+    }
+  }
+  function loadConfigFile() {
+    virtualConfigInputRef.current.click()
+  }
+
   return (
     <div className="table-header">
       <Header as='h3'>程序列表</Header>
       <div className="right">
         {/* <Button size='tiny' positive icon labelPosition='left' onClick={props.addTask}><Icon name='add square' />添加</Button> */}
         {addModal}
+        <input type='file' multiple={false} accept='.json,application/json' style={{ display: 'none' }} onChange={configFileHandler} ref={virtualConfigInputRef}></input>
+        <Button size='tiny' icon title="导入配置文件" onClick={loadConfigFile}><Icon name='upload' /></Button>
         <Button size='tiny' icon title="导出配置文件" onClick={config ? () => { config.exportConfig() } : null}><Icon name='download'></Icon></Button>
         <Button size='tiny' icon negative title="结束所有程序并退出" onClick={terminate ? () => { terminate() } : null}><Icon name='sign-out'></Icon></Button>
       </div>

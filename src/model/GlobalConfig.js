@@ -1,6 +1,6 @@
 import { ConfigError, UnhandledError } from './CustomError'
 import { readTextFile, writeTextFile } from "@tauri-apps/api/fs"
-import { confirm, save } from '@tauri-apps/api/dialog';
+import { confirm, save, message } from '@tauri-apps/api/dialog';
 import { exit } from '@tauri-apps/api/process'
 import { catchEm } from '../utils/scripts'
 
@@ -82,6 +82,13 @@ export default class GlobalConfig {
   async addTask(taskInfo) {
     if (!this.loaded) throw new ConfigError("Config not loaded.")
     if (!this._validatorTask(taskInfo)) throw new ConfigError("New task scheme error.")
+    if(taskInfo.id && this.tasks.findIndex(task => task.id === taskInfo.id) > -1) {
+      console.log('skipped row: ' + JSON.stringify(taskInfo))
+      if(taskInfo.name) {
+        message("Error: duplicate task '"+taskInfo.id+":"+taskInfo.name+"'");
+      }
+      return;
+    }
     this.tasks.push({
       id: this.tasks.length < 1 ? 1 : (this.tasks[this.tasks.length - 1].id + 1),
       name: taskInfo.name,
