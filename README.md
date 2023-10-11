@@ -47,14 +47,14 @@ Please read and understand this disclaimer in full before using this project. If
 ### 功能
 
 - [ ] 程序启动自动运行
-- [ ] 导入从程序导出的配置（backup.json => BaseDirectory.Home/.cli-runner.config.json），并解决冲突？
+- [x] 导入从程序导出的配置（backup.json => BaseDirectory.Home/.cli-runner.config.json），并解决冲突？
 - [ ] 自动检测Task是否有效（可执行程序是否存在、运行上下文是否存在）
 - [ ] 增加运行前警告⚠弹窗
 - [ ] 增加About弹窗，展示依赖及其版本号
 
 ### CI/CD
 
-- [ ] Github Action自动编译多平台安装程序
+- [x] Github Action自动编译多平台安装程序
 
 ### Programming
 
@@ -71,6 +71,8 @@ Please read and understand this disclaimer in full before using this project. If
 npm install
 npm run tauri dev
 ```
+
+> According to issue (https://github.com/tauri-apps/tauri/issues/4174), build under ARM is not supported yet.
 
 ### About Tauri
 

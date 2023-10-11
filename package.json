@@ -10,7 +10,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.2.0",
+    "@tauri-apps/api": "^1.5.0",
     "nanoid": "^5.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -18,11 +18,11 @@
     "semantic-ui-react": "^2.1.4"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.2.2",
-    "@types/react": "^18.0.15",
-    "@types/react-dom": "^18.0.6",
+    "@tauri-apps/cli": "^1.5.2",
+    "@types/react": "^18.2.28",
+    "@types/react-dom": "^18.2.13",
     "@vitejs/plugin-react": "^4.1.0",
-    "sass": "^1.57.1",
+    "sass": "^1.69.2",
     "vite": "^4.0.0"
   }
 }
