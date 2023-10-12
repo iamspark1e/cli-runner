@@ -39,7 +39,7 @@ fn main() {
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| { // https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/single-instance
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
 
-            app.emit_all("single-instance", Payload { args: argv, cwd }).unwrap();
+            // app.emit_all("single-instance", Payload { args: argv, cwd }).unwrap();
         }))
         .invoke_handler(tauri::generate_handler![greet, kill_pid, custom_command::run_command])
         // .menu(tauri::Menu::os_default(&context.package_info().name)) // 注册窗体内菜单
