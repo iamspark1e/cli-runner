@@ -1,6 +1,7 @@
-use tauri::{AppHandle, SystemTrayEvent, SystemTray, CustomMenuItem, SystemTrayMenu};
+use tauri::{AppHandle, CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu};
 // use tauri::{AppHandle, SystemTrayEvent, SystemTray, CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem};
 use tauri::Manager;
+use tauri::api::dialog;
 
 // 托盘菜单
 pub fn menu() -> SystemTray {
@@ -12,11 +13,11 @@ pub fn menu() -> SystemTray {
         //         .add_item(CustomMenuItem::new("edit_file".to_string(), "Edit File")), // 子菜单项（编辑）
         // ))
         // .add_native_item(SystemTrayMenuItem::Separator) // 分割线
-        .add_item(CustomMenuItem::new("hide".to_string(), "Hide")) // 隐藏应用窗口
-        .add_item(CustomMenuItem::new("show".to_string(), "Show")); // 显示应用窗口
+        // .add_item(CustomMenuItem::new("hide".to_string(), "Hide")) // 隐藏应用窗口
+        // .add_item(CustomMenuItem::new("show".to_string(), "Show")); // 显示应用窗口
         // .add_native_item(SystemTrayMenuItem::Separator); // 分割线
         // FIXME: 此处的退出无法获取已运行的pid？
-        // .add_item(CustomMenuItem::new("quit".to_string(), "Quit")); // 退出
+        .add_item(CustomMenuItem::new("quit".to_string(), "Quit")); // 退出
 
     // 设置在右键单击系统托盘时显示菜单
     SystemTray::new().with_menu(tray_menu)
@@ -36,6 +37,7 @@ pub fn handler(app: &AppHandle, event: SystemTrayEvent) {
             ..
         } => {
             println!("system tray received a left click");
+            window.show().unwrap();
         }
         // 右键点击
         SystemTrayEvent::RightClick {
@@ -47,21 +49,25 @@ pub fn handler(app: &AppHandle, event: SystemTrayEvent) {
         }
         // 根据菜单 id 进行事件匹配
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-            "edit_file" => {
-                // message(parent_window, "Eidt File", "TODO");
-            }
-            "new_file" => {
-                // message(parent_window, "New File", "TODO");
-            }
+            // "edit_file" => {
+            //     // message(parent_window, "Eidt File", "TODO");
+            // }
+            // "new_file" => {
+            //     // message(parent_window, "New File", "TODO");
+            // }
             "quit" => {
-                std::process::exit(0);
+                // std::process::exit(0);
+                let res = window.eval("window.__exitApp()");
+                if res.is_err() {
+                    dialog::MessageDialogBuilder::new("Quit Error", "invoke window.__exitApp() failed.");
+                }
             }
-            "show" => {
-                window.show().unwrap();
-            }
-            "hide" => {
-                window.hide().unwrap();
-            }
+            // "show" => {
+            //     window.show().unwrap();
+            // }
+            // "hide" => {
+            //     window.hide().unwrap();
+            // }
             _ => {}
         },
         _ => {}

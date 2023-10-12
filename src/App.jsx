@@ -8,6 +8,7 @@ import TaskTable, { TasksTableHandler } from "./components/Tasks"
 import AddTaskModal from "./components/AddTaskModal"
 import GlobalConfig from "./model/GlobalConfig";
 import RunningTask from "./model/TaskModel";
+import { message } from "@tauri-apps/api/dialog";
 
 function App() {
   // load config first
@@ -30,6 +31,8 @@ function App() {
   useEffect(() => {
     let _config = new GlobalConfig(BaseDirectory.Home)
     setConfig(_config)
+
+    window.__exitApp = exitApp;
 
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
@@ -107,8 +110,12 @@ function App() {
         console.log(data)
         return;
       }
-    ).finally(() => {
+    ).then(() => {
       exit(1)
+    }, (reject) => {
+      message("end tasks failed! (" + JSON.stringify(reject) + ")");
+    }).catch(e => {
+      message(e.message);
     })
   }
 
