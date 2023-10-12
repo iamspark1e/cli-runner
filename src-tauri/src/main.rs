@@ -28,10 +28,10 @@ fn kill_pid(pid: &str) {
 mod custom_command;
 mod tray;
 
-struct Payload {
-    args: Vec<String>,
-    cwd: String,
-  }
+// struct Payload {
+//     args: Vec<String>,
+//     cwd: String,
+//   }
 
 fn main() {
     let context = tauri::generate_context!();
