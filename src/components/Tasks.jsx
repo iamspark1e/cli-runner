@@ -49,7 +49,7 @@ const TaskRow = ({ task }) => {
 
   function toggleExecRunning() {
     if (task.pid) {
-      task.mockKill().then(() => {
+      task.kill().then(() => {
         const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: 0 } })
         document.dispatchEvent(updatePidEvt)
         setPid(0)
@@ -58,7 +58,7 @@ const TaskRow = ({ task }) => {
         console.log(e)
       })
     } else {
-      task.mockStart().then(() => {
+      task.start().then(() => {
         const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: task.pid } })
         document.dispatchEvent(updatePidEvt)
         setPid(task.pid)

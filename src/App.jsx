@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import TaskTable, { TasksTableHandler } from "./components/Tasks"
 import AddTaskModal from "./components/AddTaskModal"
 import GlobalConfig from "./model/GlobalConfig";
-import RunningTask from "./model/TaskModel";
+// import RunningTask from "./model/TaskModel";
 import { message } from "@tauri-apps/api/dialog";
 
 function App() {
@@ -17,21 +17,21 @@ function App() {
   // const [tasks, setTasks] = useState([])
   // const [pidMapping, setPidMapping] = useState({})
 
-  useEffect(() => {
-    if (config && config instanceof GlobalConfig) {
-      // config.mockLoad().then(() => {
-      //   // updateTaskListHandler()
-      // }).catch(e => {
-      //   console.log(e);
-      // })
-      // console.log(config.loaded)
-    }
-  }, [config])
+  // useEffect(() => {
+  //   if (config && config instanceof GlobalConfig) {
+  //     config.mockLoad().then(() => {
+  //       // updateTaskListHandler()
+  //     }).catch(e => {
+  //       console.log(e);
+  //     })
+  //     console.log(config.loaded)
+  //   }
+  // }, [config])
 
   // mounted lifecycle
   useEffect(() => {
     let _config = new GlobalConfig(BaseDirectory.Home)
-    _config.mockLoad().then(() => {
+    _config.load().then(() => {
       // updateTaskListHandler()
       setConfig(_config)
     }).catch(e => {

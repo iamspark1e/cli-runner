@@ -116,9 +116,7 @@ export default class GlobalConfig {
   }
 
   async mockLoad() {
-    let mockRawfileData = [{"id":1,"name":"statics1-as","executable":"F:\\portable\\naiveproxy\\naive.exe","args":"statics1-as.json","cwd":"F:\\portable\\naiveproxy","auto_start":false},{"id":7,"name":"statics1-na","executable":"F:\\portable\\naiveproxy\\naive.exe","args":"statics1-na.json","cwd":"F:\\portable\\naiveproxy","auto_start":false},{"id":3,"name":"statics-oci1-as","executable":"F:\\portable\\naiveproxy\\naive.exe","args":"statics-oci1-as.json","cwd":"F:\\portable\\naiveproxy","auto_start":false},{"id":4,"name":"statics-oci2-as","executable":"F:\\portable\\naiveproxy\\naive.exe","args":"statics-oci2-as.json","cwd":"F:\\portable\\naiveproxy","auto_start":false},{"id":5,"name":"statics-pro1-na","executable":"F:\\portable\\naiveproxy\\naive.exe","args":"statics-pro1-na.json","cwd":"F:\\portable\\naiveproxy","auto_start":false},{"id":6,"name":"statics-pro2-na","executable":"F:\\portable\\naiveproxy\\naive.exe","args":"statics-pro2-na.json","cwd":"F:\\portable\\naiveproxy","auto_start":false}]
-    // validate first
-    // if (!this._validator(mockRawfileData)) throw new ConfigError("Load config failed.")
+    let mockRawfileData = []
     this.tasks = mockRawfileData.map(task => new RunningTask(task))
     this.loaded = true;
   }
