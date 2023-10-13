@@ -46,7 +46,7 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
 }
 
 #[tauri::command]
-fn kill_pid(pid: &str) {
+pub fn kill_pid(pid: &str) {
     // let kill_result = Command::new("cmd.exe")
     //     .arg("/C")
     //     .arg("taskkill")
