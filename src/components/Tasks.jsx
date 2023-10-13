@@ -1,7 +1,7 @@
-import { useReducer, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button, Table, Icon, Header, Modal } from 'semantic-ui-react'
 import ModifyTaskModal from './ModifyTaskModal'
-import { confirm, save, message  } from '@tauri-apps/api/dialog'
+import { message } from '@tauri-apps/api/dialog'
 import GlobalConfig from "../model/GlobalConfig";
 import './Tasks.scss'
 
@@ -44,15 +44,15 @@ const ConfirmRemoveTaskModal = ({ onConfirm }) => {
 }
 
 const TaskRow = ({ task }) => {
-  // FIXME: how to avoid `forceUpdate()` ?
-  const [_, forceUpdate] = useReducer(x => x + 1, 0);
+  // const [_, forceUpdate] = useReducer(x => x + 1, 0);
+  const [pid, setPid] = useState(task.pid)
 
   function toggleExecRunning() {
     if (task.pid) {
       task.kill().then(() => {
         const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: 0 } })
         document.dispatchEvent(updatePidEvt)
-        forceUpdate()
+        setPid(0)
       }).catch(e => {
         console.log("kill error: ")
         console.log(e)
@@ -61,7 +61,7 @@ const TaskRow = ({ task }) => {
       task.start().then(() => {
         const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: task.pid } })
         document.dispatchEvent(updatePidEvt)
-        forceUpdate()
+        setPid(task.pid)
       }).catch(e => {
         console.log("start error: ")
         console.log(e)
@@ -75,7 +75,6 @@ const TaskRow = ({ task }) => {
         console.log('kill error')
         console.log(e)
       })
-      forceUpdate()
     }
   }
   function removeTaskFromConfig(task) {
@@ -95,18 +94,18 @@ const TaskRow = ({ task }) => {
   }
 
   return (
-    <Table.Row positive={task.pid > 0}>
+    <Table.Row positive={pid > 0} key={task.id}>
       <Table.Cell className='task-name'>
         <strong className='dashed-underline'>{task.name}</strong>
       </Table.Cell>
-      <Table.Cell>{task.pid || "-"}</Table.Cell>
+      <Table.Cell>{pid || "-"}</Table.Cell>
       <Table.Cell textAlign='left'>
         <code title={task.executable + ' ' + task.args}><b>{task.executable}</b> {task.args}</code>
       </Table.Cell>
       <Table.Cell>
         <div className='operate'>
           <Button icon title="Start/Stop" size='mini' onClick={toggleExecRunning}>
-            {task.pid ? <Icon name='stop circle outline' /> : <Icon name='play circle outline' />}
+            {pid ? <Icon name='stop circle outline' /> : <Icon name='play circle outline' />}
           </Button>
           {/* <Button icon title="编辑..." size='mini' style={{ marginLeft: 6 }}>
             <Icon name='edit outline' />
@@ -135,25 +134,25 @@ export const TasksTableHandler = ({ config, addModal, terminate }) => {
         try {
           let data = JSON.parse(evt.target.result);
           if (config && config instanceof GlobalConfig) {
-            if(!Array.isArray(data)) {
+            if (!Array.isArray(data)) {
               message("Error: load config JSON failed, please check!");
               return;
             }
             data.forEach(row => {
               try {
                 config.addTask(row);
-              } catch(err) {
+              } catch (err) {
                 message("Error: load row failed, please check " + (row.id || ("NO ID ROW")));
               }
             })
-            
+
             setTimeout(() => {
               window.location.reload()
             }, 1000)
           } else {
             message("Error: " + "config is not a constructor of `GlobalConfig`");
           }
-        } catch(e) {
+        } catch (e) {
           console.log(e)
           message("Error: " + e.message);
         }
@@ -185,7 +184,7 @@ export const TasksTableHandler = ({ config, addModal, terminate }) => {
   )
 }
 
-const TasksTable = ({ tasks, handlerComponent }) => {
+const TasksTable = ({ config, handlerComponent }) => {
   return (
     <Table celled striped singleLine compact className='tasks-table'>
       <Table.Header>
@@ -204,8 +203,8 @@ const TasksTable = ({ tasks, handlerComponent }) => {
 
       <Table.Body className='tasks-body'>
         {
-          (tasks && Array.isArray(tasks) && tasks.length > 0) ?
-            tasks.map((task) => {
+          (config && config.tasks && Array.isArray(config.tasks) && config.tasks.length > 0) ?
+            config.tasks.map((task) => {
               return (
                 <TaskRow key={task.id} task={task} />
               )
