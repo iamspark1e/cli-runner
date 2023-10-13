@@ -1,5 +1,14 @@
 use std::path::PathBuf;
+use std::process::Command;
+use std::collections::HashMap;
 
+let mut created_process = HashMap::new();
+
+// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+// #[tauri::command]
+// fn greet(name: &str) -> String {
+//     format!("Hello, {}! You've been greeted from Rust!", name)
+// }
 #[derive(serde::Serialize)]
 pub struct Output {
     pid: u32,
@@ -32,5 +41,24 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .args(args)
         .spawn()
         .expect("Failed to spawn custom program");
+    created_process.insert(String::from(child.pid()), child);
     Output { pid: child.pid() }
+}
+
+#[tauri::command]
+fn kill_pid(pid: &str) {
+    // let kill_result = Command::new("cmd.exe")
+    //     .arg("/C")
+    //     .arg("taskkill")
+    //     .arg("/pid")
+    //     .arg(format!("{}", pid))
+    //     .arg("/F")
+    //     .spawn();
+    // // Output:
+    // // Ok(Child { stdin: None, stdout: None, stderr: None, .. })
+    // // SUCCESS: The process with PID 10492 has been terminated.
+    // println!("{:?}", kill_result)
+    let child_process = created_process.get(pid).copied().unwrap_or(0);
+    child_process.kill().expect("!kill");
+    created_process.remove(pid);
 }
