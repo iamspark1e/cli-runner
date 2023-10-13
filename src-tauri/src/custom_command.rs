@@ -2,7 +2,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::collections::HashMap;
 
-let mut created_process = HashMap::new();
+static mut created_process = HashMap::new();
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 // #[tauri::command]
