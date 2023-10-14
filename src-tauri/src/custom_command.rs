@@ -62,7 +62,7 @@ pub fn kill_pid(pid: &str) {
     // // SUCCESS: The process with PID 10492 has been terminated.
     // println!("{:?}", kill_result)
     unsafe {
-        const child_process: tauri::api::process::CommandChild = CREATED_PROCESS.get(pid).unwrap();
+        let child_process: tauri::api::process::CommandChild = *CREATED_PROCESS.get(pid).unwrap();
         child_process.kill().expect("!kill");
         CREATED_PROCESS.remove(pid);
     }
