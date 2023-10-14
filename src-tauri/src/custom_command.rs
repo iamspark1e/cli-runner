@@ -5,7 +5,7 @@ use lazy_static::lazy_static;
 
 lazy_static! {
     static ref CREATED_PROCESS: HashMap<String, tauri::api::process::CommandChild> = {
-        let mut map = HashMap::new();
+        let map = HashMap::new();
         map
     };
 }
