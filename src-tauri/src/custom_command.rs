@@ -1,10 +1,11 @@
 use std::path::PathBuf;
 // use std::process::Command;
 use std::{collections::HashMap, sync::Mutex};
+use tauri::api::process::CommandChild;
 use lazy_static::lazy_static;
 
 lazy_static! {
-    static ref CREATED_PROCESS: Mutex<HashMap<String, tauri::api::process::CommandChild>> = {
+    static ref CREATED_PROCESS: Mutex<HashMap<String, CommandChild>> = {
         let map = HashMap::new();
         Mutex::new(map)
     };
@@ -70,9 +71,10 @@ pub fn kill_pid(pid: &str) {
     unsafe {
         let possible_process = CREATED_PROCESS.lock().unwrap().get(pid);
         match possible_process {
-            Some(tauri::api::process::CommandChild) => {
-                let child_process: tauri::api::process::CommandChild = possible_process;
-                child_process.kill().expect("!kill");
+            Some(CommandChild) => {
+                let child_process = possible_process.unwrap();
+                let real_process = *child_process;
+                real_process.kill().expect("!kill");
                 CREATED_PROCESS.lock().unwrap().remove(pid);
             }
             None => println!("No Process."),
