@@ -1,11 +1,11 @@
 use std::path::PathBuf;
 // use std::process::Command;
+use lazy_static::lazy_static;
 use std::{collections::HashMap, sync::Mutex};
 use tauri::api::process::CommandChild;
-use lazy_static::lazy_static;
 
 lazy_static! {
-    static ref CREATED_PROCESS: Mutex<HashMap<String, CommandChild>> = {
+    static ref CREATED_PROCESS: Mutex<HashMap<String, &CommandChild>> = {
         let map = HashMap::new();
         Mutex::new(map)
     };
@@ -48,11 +48,11 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .args(args)
         .spawn()
         .expect("Failed to spawn custom program");
+    let pid = child.pid().to_string();
     unsafe {
-        let pid = child.pid().to_string();
-        CREATED_PROCESS.lock().unwrap().insert(pid, child);
+        CREATED_PROCESS.lock().unwrap().insert(pid, &child);
     }
-    Output { pid: child.pid() }
+    Output { pid: pid }
 }
 
 #[tauri::command]
@@ -69,12 +69,13 @@ pub fn kill_pid(pid: &str) {
     // // SUCCESS: The process with PID 10492 has been terminated.
     // println!("{:?}", kill_result)
     unsafe {
-        let possible_process = CREATED_PROCESS.lock().unwrap().get(pid);
+        let possible_mutex = CREATED_PROCESS.lock().unwrap();
+        let possible_process = possible_mutex.get(pid);
         match possible_process {
-            Some(CommandChild) => {
-                let child_process = possible_process.unwrap();
-                let real_process = *child_process;
-                real_process.kill().expect("!kill");
+            Some(_command_child) => {
+                // let child_process = possible_process.unwrap();
+                // let real_process = **_command_child;
+                **_command_child.kill().expect("!kill");
                 CREATED_PROCESS.lock().unwrap().remove(pid);
             }
             None => println!("No Process."),
