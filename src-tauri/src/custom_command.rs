@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use std::process::Command;
+// use std::process::Command;
 use std::collections::HashMap;
 
 const CREATED_PROCESS: HashMap<String, CommandChild> = HashMap::new();
@@ -41,7 +41,7 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .args(args)
         .spawn()
         .expect("Failed to spawn custom program");
-    CREATED_PROCESS.insert(String::from(child.pid()), child);
+    CREATED_PROCESS.insert(child.pid().to_string(), child);
     Output { pid: child.pid() }
 }
 
