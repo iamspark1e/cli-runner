@@ -1,9 +1,7 @@
 use std::path::PathBuf;
 // use std::process::Command;
 use std::collections::HashMap;
-
-#[macro_use]
-extern crate lazy_static;
+use lazy_static::lazy_static;
 
 lazy_static! {
     static ref CREATED_PROCESS: HashMap<String, tauri::api::process::CommandChild> = {
