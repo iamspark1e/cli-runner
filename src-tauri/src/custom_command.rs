@@ -2,7 +2,7 @@ use std::path::PathBuf;
 // use std::process::Command;
 use std::collections::HashMap;
 
-const CREATED_PROCESS: HashMap<String, tauri::api::process::CommandChild> = HashMap::new();
+static mut CREATED_PROCESS: HashMap<String, tauri::api::process::CommandChild> = HashMap::new();
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 // #[tauri::command]
@@ -33,7 +33,7 @@ pub struct Output {
 //   }
 // });
 #[tauri::command]
-pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
+pub unsafe fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
     let path_buf = PathBuf::from(dir);
     // TODO: add a channel to show _rx stdout/stderr
     let (mut _rx, child) = tauri::api::process::Command::new(command)
@@ -41,12 +41,14 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .args(args)
         .spawn()
         .expect("Failed to spawn custom program");
-    CREATED_PROCESS.insert(child.pid().to_string(), child);
+    // unsafe {
+        CREATED_PROCESS.insert(child.pid().to_string(), child);
+    // }
     Output { pid: child.pid() }
 }
 
 #[tauri::command]
-pub fn kill_pid(pid: &str) {
+pub unsafe fn kill_pid(pid: &str) {
     // let kill_result = Command::new("cmd.exe")
     //     .arg("/C")
     //     .arg("taskkill")
@@ -58,7 +60,9 @@ pub fn kill_pid(pid: &str) {
     // // Ok(Child { stdin: None, stdout: None, stderr: None, .. })
     // // SUCCESS: The process with PID 10492 has been terminated.
     // println!("{:?}", kill_result)
-    let child_process = CREATED_PROCESS.get(pid).unwrap();
-    child_process.kill().expect("!kill");
-    CREATED_PROCESS.remove(pid);
+    // unsafe {
+        let child_process = CREATED_PROCESS.get(pid).unwrap();
+        child_process.kill().expect("!kill");
+        CREATED_PROCESS.remove(pid);
+    // }
 }
