@@ -2,7 +2,7 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::collections::HashMap;
 
-static mut created_process = HashMap::new();
+const CREATED_PROCESS: HashMap<String, CommandChild> = HashMap::new();
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 // #[tauri::command]
@@ -41,7 +41,7 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .args(args)
         .spawn()
         .expect("Failed to spawn custom program");
-    created_process.insert(String::from(child.pid()), child);
+    CREATED_PROCESS.insert(String::from(child.pid()), child);
     Output { pid: child.pid() }
 }
 
@@ -58,7 +58,7 @@ pub fn kill_pid(pid: &str) {
     // // Ok(Child { stdin: None, stdout: None, stderr: None, .. })
     // // SUCCESS: The process with PID 10492 has been terminated.
     // println!("{:?}", kill_result)
-    let child_process = created_process.get(pid).copied().unwrap_or(0);
+    let child_process = CREATED_PROCESS.get(pid).copied().unwrap_or(0);
     child_process.kill().expect("!kill");
-    created_process.remove(pid);
+    CREATED_PROCESS.remove(pid);
 }
