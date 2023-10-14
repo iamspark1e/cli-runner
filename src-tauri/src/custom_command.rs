@@ -1,5 +1,13 @@
 use std::path::PathBuf;
 // use std::process::Command;
+use lazy_static::lazy_static;
+
+lazy_static! {
+    static ref CREATED_PROCESS: HashMap<String, tauri::api::process::CommandChild> = {
+        let mut map = HashMap::new();
+        map;
+    };
+}
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 // #[tauri::command]

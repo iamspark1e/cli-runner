@@ -2,22 +2,10 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-
-use std::collections::HashMap;
-
 // struct Payload {
 //     args: Vec<String>,
 //     cwd: String,
 //   }
-#[macro_use]
-extern crate lazy_static;
-
-lazy_static! {
-    static ref CREATED_PROCESS: HashMap<String, tauri::api::process::CommandChild> = {
-        let mut map = HashMap::new();
-        map;
-    };
-}
 
 mod custom_command;
 mod tray;
@@ -25,16 +13,12 @@ mod tray;
 fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
-            // https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/single-instance
+        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| { // https://github.com/tauri-apps/plugins-workspace/tree/v1/plugins/single-instance
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
 
             // app.emit_all("single-instance", Payload { args: argv, cwd }).unwrap();
         }))
-        .invoke_handler(tauri::generate_handler![
-            custom_command::kill_pid,
-            custom_command::run_command
-        ])
+        .invoke_handler(tauri::generate_handler![custom_command::kill_pid, custom_command::run_command])
         // .menu(tauri::Menu::os_default(&context.package_info().name)) // 注册窗体内菜单
         .system_tray(tray::menu()) // ✅ 将 `tauri.conf.json` 上配置的图标添加到系统托盘
         .on_system_tray_event(tray::handler) // ✅ 注册系统托盘事件处理程序
