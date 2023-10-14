@@ -6,7 +6,7 @@ use lazy_static::lazy_static;
 lazy_static! {
     static ref CREATED_PROCESS: Mutex<HashMap<String, tauri::api::process::CommandChild>> = {
         let map = HashMap::new();
-        map
+        Mutex::new(map)
     };
 }
 
@@ -49,7 +49,7 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .expect("Failed to spawn custom program");
     unsafe {
         let pid = child.pid().to_string();
-        CREATED_PROCESS.lock().unwrap().insert(pid, &mut child);
+        CREATED_PROCESS.lock().unwrap().insert(pid, child);
     }
     Output { pid: child.pid() }
 }
