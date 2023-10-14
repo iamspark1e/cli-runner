@@ -58,7 +58,11 @@ pub fn kill_pid(pid: &str) {
     // // Ok(Child { stdin: None, stdout: None, stderr: None, .. })
     // // SUCCESS: The process with PID 10492 has been terminated.
     // println!("{:?}", kill_result)
-    let child_process = CREATED_PROCESS.get(pid).copied().unwrap_or(0);
-    child_process.kill().expect("!kill");
-    CREATED_PROCESS.remove(pid);
+    let child_process = CREATED_PROCESS.get(pid);
+    if !child_process {
+        format!("Hello, {}! You've been greeted from Rust!", pid)
+    } else {
+        child_process.kill().expect("!kill");
+        CREATED_PROCESS.remove(pid);
+    }
 }
