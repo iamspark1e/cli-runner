@@ -2,7 +2,7 @@ use std::path::PathBuf;
 // use std::process::Command;
 use std::collections::HashMap;
 
-const CREATED_PROCESS: HashMap<String, tauri::api::process::command::CommandChild> = HashMap::new();
+const CREATED_PROCESS: HashMap<String, tauri::api::process::CommandChild> = HashMap::new();
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 // #[tauri::command]
@@ -59,10 +59,6 @@ pub fn kill_pid(pid: &str) {
     // // SUCCESS: The process with PID 10492 has been terminated.
     // println!("{:?}", kill_result)
     let child_process = CREATED_PROCESS.get(pid);
-    if !child_process {
-        format!("Hello, {}! You've been greeted from Rust!", pid)
-    } else {
-        child_process.kill().expect("!kill");
-        CREATED_PROCESS.remove(pid);
-    }
+    child_process.kill().expect("!kill");
+    CREATED_PROCESS.remove(pid);
 }
