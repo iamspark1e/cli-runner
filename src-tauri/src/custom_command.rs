@@ -1,10 +1,10 @@
 use std::path::PathBuf;
 // use std::process::Command;
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Mutex};
 use lazy_static::lazy_static;
 
 lazy_static! {
-    static ref CREATED_PROCESS: HashMap<String, tauri::api::process::CommandChild> = {
+    static ref CREATED_PROCESS: Mutex<HashMap<String, tauri::api::process::CommandChild>> = {
         let map = HashMap::new();
         map
     };
@@ -49,7 +49,7 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .expect("Failed to spawn custom program");
     unsafe {
         let pid = child.pid().to_string();
-        CREATED_PROCESS.insert(pid, child);
+        CREATED_PROCESS.lock().unwrap().insert(pid, &mut child);
     }
     Output { pid: child.pid() }
 }
@@ -68,8 +68,8 @@ pub fn kill_pid(pid: &str) {
     // // SUCCESS: The process with PID 10492 has been terminated.
     // println!("{:?}", kill_result)
     unsafe {
-        let child_process: tauri::api::process::CommandChild = *CREATED_PROCESS.get(pid).unwrap();
+        let child_process: tauri::api::process::CommandChild = CREATED_PROCESS.lock().unwrap().get(pid);
         child_process.kill().expect("!kill");
-        CREATED_PROCESS.remove(pid);
+        CREATED_PROCESS.lock().unwrap().remove(pid);
     }
 }
