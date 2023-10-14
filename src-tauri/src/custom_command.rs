@@ -58,7 +58,7 @@ pub fn kill_pid(pid: &str) {
     // // Ok(Child { stdin: None, stdout: None, stderr: None, .. })
     // // SUCCESS: The process with PID 10492 has been terminated.
     // println!("{:?}", kill_result)
-    let child_process = CREATED_PROCESS.get(pid);
+    let child_process = CREATED_PROCESS.get(pid).unwrap();
     child_process.kill().expect("!kill");
     CREATED_PROCESS.remove(pid);
 }
