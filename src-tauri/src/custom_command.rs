@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 // use std::process::Command;
+use std::collections::HashMap;
 use lazy_static::lazy_static;
 
 lazy_static! {
