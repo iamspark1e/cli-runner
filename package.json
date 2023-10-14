@@ -1,7 +1,7 @@
 {
   "name": "cli-runner",
   "private": true,
-  "version": "0.0.3-alpha.24",
+  "version": "0.0.3-alpha.25",
   "type": "module",
   "scripts": {
     "dev": "vite",
