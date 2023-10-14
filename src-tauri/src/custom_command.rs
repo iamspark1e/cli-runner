@@ -49,7 +49,7 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .expect("Failed to spawn custom program");
     unsafe {
         let pid = child.pid().to_string();
-        CREATED_PROCESS.insert(pid, child);
+        *CREATED_PROCESS.insert(pid, child);
     }
     Output { pid: child.pid() }
 }
@@ -70,6 +70,6 @@ pub fn kill_pid(pid: &str) {
     unsafe {
         let child_process: tauri::api::process::CommandChild = *CREATED_PROCESS.get(pid).unwrap();
         child_process.kill().expect("!kill");
-        CREATED_PROCESS.remove(pid);
+        *CREATED_PROCESS.remove(pid);
     }
 }
