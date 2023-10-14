@@ -2,7 +2,7 @@ use std::path::PathBuf;
 // use std::process::Command;
 use std::collections::HashMap;
 
-const CREATED_PROCESS: HashMap<String, CommandChild> = HashMap::new();
+const CREATED_PROCESS: HashMap<String, tauri::api::process::command::CommandChild> = HashMap::new();
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 // #[tauri::command]
