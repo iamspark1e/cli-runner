@@ -69,7 +69,7 @@ function ModifyTaskModal({ task, updateHandler }) {
       onClose={hide}
       onOpen={show}
       open={open}
-      trigger={<Button icon title="编辑..." size='mini' style={{ marginLeft: 6 }} disabled={task.pid}>
+      trigger={<Button icon title="编辑..." size='mini' style={{ marginLeft: 6 }} disabled={Boolean(task.pid)}>
         <Icon name='edit outline' />
       </Button>}
       className="add-task-modal"

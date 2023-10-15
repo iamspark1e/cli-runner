@@ -3,16 +3,76 @@ import { readTextFile, writeTextFile } from "@tauri-apps/api/fs"
 import { confirm, save, message } from '@tauri-apps/api/dialog';
 import { exit } from '@tauri-apps/api/process'
 import { catchEm } from '../utils/scripts'
+import { invoke } from "@tauri-apps/api/tauri";
 
 /**
  * Example Config
  */
 export const CONST_GLOBAL_CONFIG_FILENAME = ".cli-runner.config.json"
 
+export class Task {
+  constructor(data) {
+    // TaskConfigs
+    this.id = data.id;
+    this.name = data.name;
+    this.executable = data.executable || BaseDirectory.Home;
+    this.args = data.args;
+    this.cwd = data.cwd || "";
+    this.auto_start = Boolean(data.auto_start) || false;
+  }
+}
+
+export class RunningTask extends Task {
+  pid = 0; // 0: 未运行
+           // int: 运行中
+  constructor(data) {
+    super(data)
+  }
+
+  async start() {
+    if(this.pid) throw new Error("Task already started")
+    // old way:
+    // let data = await new Command(exe, this.args, { cwd: this.cwd }).spawn().catch(e => {
+    //   console.log(e)
+    //   throw new SpawnFailedError(e.message)
+    // })
+    let data = await invoke("run_command", {
+      command: this.executable,
+      args: this.args.split(" "),
+      dir: this.cwd
+    }).catch(e => {
+      console.log(e)
+    })
+    this.pid = data.pid;
+    return data.pid;
+  }
+
+  async mockStart() {
+    let randomId = parseInt(Math.random() * 100);
+    this.pid = randomId;
+    return randomId;
+  }
+
+  async mockKill() {
+    this.pid = 0;
+    return true;
+  }
+
+  async kill() {
+    if(!this.pid) throw new KillFailedError("Task is not running");
+    await invoke("kill_pid", { pid: this.pid.toString() }).catch(e => {
+      console.log(e);
+      throw new KillFailedError(e.message)
+    })
+    this.pid = 0;
+    return true;
+  }
+}
+
 export default class GlobalConfig {
   loaded = false;
-  filedir = ""
-  tasks = []
+  filedir = "";
+  tasks = [];
   constructor(filedir) {
     if (!filedir) throw new ConfigError("Missing config file path.")
     this.filedir = filedir;
@@ -25,6 +85,7 @@ export default class GlobalConfig {
       if (!Array.isArray(data)) return false; // incorrect root data type
       // TODO: add more validator.
     } catch (e) {
+      console.log(e)
       return false; // parse failed
     }
     return true;
@@ -35,8 +96,7 @@ export default class GlobalConfig {
       dir: this.filedir
     }))
     if (err) {
-      // TODO: modify "no config" judgement
-      if (err.includes("(os error 2)")) {
+      if (typeof err === 'string' && err.includes("(os error 2)")) {
         let data = await confirm('未检测到配置文件，创建一个以立即使用？', 'CLI Runner')
         if (data) {
           await this.init()
@@ -52,6 +112,12 @@ export default class GlobalConfig {
     // validate first
     if (!this._validator(rawfiledata)) throw new ConfigError("Load config failed.")
     this.tasks = JSON.parse(rawfiledata)
+    this.loaded = true;
+  }
+
+  async mockLoad() {
+    let mockRawfileData = []
+    this.tasks = mockRawfileData.map(task => new RunningTask(task))
     this.loaded = true;
   }
 
