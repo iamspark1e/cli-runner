@@ -58,10 +58,10 @@ const TaskRow = ({ task }) => {
         console.log(e)
       })
     } else {
-      task.start().then(() => {
-        const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: task.pid } })
+      task.start().then((_pid) => {
+        const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: _pid } })
         document.dispatchEvent(updatePidEvt)
-        setPid(task.pid)
+        setPid(_pid)
       }).catch(e => {
         console.log("start error: ")
         console.log(e)
