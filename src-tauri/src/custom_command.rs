@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::env::consts::OS;
 
 #[derive(serde::Serialize)]
 pub struct Output {
@@ -32,7 +33,7 @@ fn greet(name: &str) -> String {
 }
 #[tauri::command]
 pub fn kill_pid(pid: &str) {
-    if (env::consts::OS == "windows") {
+    if OS == "windows" {
         let win_kill_result = Command::new("cmd.exe")
             .arg("/C")
             .arg("taskkill")
