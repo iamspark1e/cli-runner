@@ -6,7 +6,7 @@ use std::{collections::HashMap, sync::Mutex};
 use std::process::{Command, Child};
 
 lazy_static! {
-    static ref CREATED_PROCESS: Mutex<HashMap<String, &Child>> = {
+    static ref CREATED_PROCESS: Mutex<HashMap<String, &'static Child>> = {
         let map = HashMap::new();
         Mutex::new(map)
     };
@@ -50,7 +50,7 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .args(args)
         .spawn()
         .expect("Failed to spawn custom program");
-    let pid = child.pid();
+    let pid = child.id();
     unsafe {
         CREATED_PROCESS.lock().unwrap().insert(pid.to_string(), &child);
     }
