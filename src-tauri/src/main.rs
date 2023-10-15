@@ -3,8 +3,6 @@
     windows_subsystem = "windows"
 )]
 
-use std::process::Command;
-
 mod custom_command;
 mod tray;
 
