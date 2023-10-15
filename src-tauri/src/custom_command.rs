@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 use std::env::consts::OS;
+use std::process::Command;
 
 #[derive(serde::Serialize)]
 pub struct Output {
@@ -64,4 +65,32 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .spawn()
         .expect("Failed to spawn custom program");
     Output { pid: child.pid() }
+}
+// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+#[tauri::command]
+fn greet(name: &str) -> String {
+    format!("Hello, {}! You've been greeted from Rust!", name)
+}
+#[tauri::command]
+pub fn kill_pid(pid: &str) {
+    if OS == "windows" {
+        let win_kill_result = Command::new("cmd.exe")
+            .arg("/C")
+            .arg("taskkill")
+            .arg("/pid")
+            .arg(format!("{}", pid))
+            .arg("/F")
+            .spawn();
+        // Output:
+        // Ok(Child { stdin: None, stdout: None, stderr: None, .. })
+        // SUCCESS: The process with PID 10492 has been terminated.
+        println!("{:?}", win_kill_result)
+    } else {
+        let unix_kill_result = Command::new("kill")
+            .arg("-9")
+            .arg(format!("{}", pid))
+            .output()
+            .expect("Cannot kill process");
+        println!("{:?}", unix_kill_result)
+    }
 }
