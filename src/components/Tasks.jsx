@@ -44,24 +44,26 @@ const ConfirmRemoveTaskModal = ({ onConfirm }) => {
 }
 
 const TaskRow = ({ task }) => {
-  // const [_, forceUpdate] = useReducer(x => x + 1, 0);
+  const [_, forceUpdate] = useReducer(x => x + 1, 0);
   const [pid, setPid] = useState(task.pid)
 
   function toggleExecRunning() {
     if (task.pid) {
       task.kill().then(() => {
-        const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: 0 } })
-        document.dispatchEvent(updatePidEvt)
-        setPid(0)
+        const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: 0 } });
+        document.dispatchEvent(updatePidEvt);
+        setPid(0);
+        forceUpdate();
       }).catch(e => {
         console.log("kill error: ")
         console.log(e)
       })
     } else {
       task.start().then((_pid) => {
-        const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: _pid } })
-        document.dispatchEvent(updatePidEvt)
-        setPid(_pid)
+        const updatePidEvt = new CustomEvent("updateTaskPid", { detail: { id: task.id, pid: _pid } });
+        document.dispatchEvent(updatePidEvt);
+        setPid(_pid);
+        forceUpdate();
       }).catch(e => {
         console.log("start error: ")
         console.log(e)
