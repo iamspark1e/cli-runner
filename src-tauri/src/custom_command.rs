@@ -5,7 +5,7 @@ use std::{collections::HashMap, sync::Mutex};
 use tauri::api::process::CommandChild;
 
 lazy_static! {
-    static ref CREATED_PROCESS: Mutex<HashMap<String, &CommandChild>> = {
+    static ref CREATED_PROCESS: Mutex<HashMap<String, &'static CommandChild>> = {
         let map = HashMap::new();
         Mutex::new(map)
     };
@@ -48,9 +48,9 @@ pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
         .args(args)
         .spawn()
         .expect("Failed to spawn custom program");
-    let pid = child.pid().to_string();
+    let pid = child.pid();
     unsafe {
-        CREATED_PROCESS.lock().unwrap().insert(pid, &child);
+        CREATED_PROCESS.lock().unwrap().insert(pid.to_string(), &child);
     }
     Output { pid: pid }
 }
