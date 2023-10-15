@@ -75,7 +75,7 @@ pub fn kill_pid(pid: &str) {
             Some(_command_child) => {
                 // let child_process = possible_process.unwrap();
                 // let real_process = **_command_child;
-                **_command_child.kill().expect("!kill");
+                *_command_child.kill().expect("!kill");
                 CREATED_PROCESS.lock().unwrap().remove(pid);
             }
             None => println!("No Process."),
