@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 use std::env::consts::OS;
-use tauri::api::process::Command;
+use std::process::Command;
 
 #[derive(serde::Serialize)]
 pub struct Output {
