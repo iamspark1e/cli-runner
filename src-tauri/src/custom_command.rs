@@ -2,10 +2,11 @@ use std::path::PathBuf;
 // use std::process::Command;
 use lazy_static::lazy_static;
 use std::{collections::HashMap, sync::Mutex};
-use tauri::api::process::CommandChild;
+// use tauri::api::process::CommandChild;
+use std::process::{Command, Child};
 
 lazy_static! {
-    static ref CREATED_PROCESS: Mutex<HashMap<String, &'static CommandChild>> = {
+    static ref CREATED_PROCESS: Mutex<HashMap<String, &Child>> = {
         let map = HashMap::new();
         Mutex::new(map)
     };
@@ -43,7 +44,8 @@ pub struct Output {
 pub fn run_command(command: String, args: Vec<String>, dir: String) -> Output {
     let path_buf = PathBuf::from(dir);
     // TODO: add a channel to show _rx stdout/stderr
-    let (mut _rx, child) = tauri::api::process::Command::new(command)
+    // let (mut _rx, mut child) = tauri::api::process::Command::new(command)
+    let mut child = Command::new(command)
         .current_dir(path_buf)
         .args(args)
         .spawn()
